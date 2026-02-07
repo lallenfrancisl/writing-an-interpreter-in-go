@@ -6,5 +6,5 @@ written as part of reading the book
 These are the things I am going to do on my own that are not done in the
 book since they are out of scope of it
 
-- [] Add support for unicode characters
-- [] Add support for postfix operators
+- [ ] Add support for unicode characters
+- [ ] Add support for postfix operators
