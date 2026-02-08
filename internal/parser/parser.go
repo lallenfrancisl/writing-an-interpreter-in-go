@@ -3,6 +3,7 @@ package parser
 
 import (
 	"fmt"
+	"strconv"
 
 	"monkey/internal/ast"
 	"monkey/internal/lexer"
@@ -39,6 +40,7 @@ func New(l *lexer.Lexer) *Parser {
 
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
+	p.registerPrefix(token.INT, p.parseIntegerLiteral)
 
 	// Done so that peekToken and curToken are both set
 	p.nextToken()
@@ -160,6 +162,22 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 
 func (p *Parser) parseIdentifier() ast.Expression {
 	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+}
+
+func (p *Parser) parseIntegerLiteral() ast.Expression {
+	exp := &ast.IntegerLiteral{Token: p.curToken}
+
+	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+	if err != nil {
+		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
+		p.errors = append(p.errors, msg)
+
+		return nil
+	}
+
+	exp.Value = value
+
+	return exp
 }
 
 func (p *Parser) curTokenIs(t token.TokenType) bool {
