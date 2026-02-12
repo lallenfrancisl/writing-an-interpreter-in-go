@@ -1,7 +1,9 @@
 // Package lexer contains the lexer for monkey lang
 package lexer
 
-import "monkey/internal/token"
+import (
+	"monkey/internal/token"
+)
 
 type Lexer struct {
 	input        string
@@ -16,10 +18,10 @@ func (l *Lexer) readChar() {
 		l.ch = 0
 	} else {
 		l.ch = l.input[l.readPosition]
-
-		l.position = l.readPosition
-		l.readPosition += 1
 	}
+
+	l.position = l.readPosition
+	l.readPosition += 1
 }
 
 func (l *Lexer) peekChar() byte {
