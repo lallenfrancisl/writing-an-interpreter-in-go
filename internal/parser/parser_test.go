@@ -366,7 +366,7 @@ func TestParsingInfixExpressions(t *testing.T) {
 		}
 
 		testInfixExpression(
-			t, stmt.Expression, tt.rightValue, tt.operator, tt.rightValue,
+			t, stmt.Expression, tt.leftValue, tt.operator, tt.rightValue,
 		)
 	}
 }
