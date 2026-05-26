@@ -174,13 +174,15 @@ func TestParsingIntegerLiteralExpression(t *testing.T) {
 
 func TestParsingPrefixExpressions(t *testing.T) {
 	prefixTests := []struct {
-		input        string
-		operator     string
-		integerValue int64
+		input    string
+		operator string
+		value    any
 	}{
 		{"!5;", "!", 5},
 		{"-15;", "-", 15},
 		{"+15;", "+", 15},
+		{"!false;", "!", false},
+		{"!true;", "!", true},
 	}
 
 	for _, tt := range prefixTests {
@@ -217,7 +219,7 @@ func TestParsingPrefixExpressions(t *testing.T) {
 			)
 		}
 
-		if !testIntegerLiteral(t, exp.Right, tt.integerValue) {
+		if !testLiteralExpression(t, exp.Right, tt.value) {
 			return
 		}
 	}
@@ -290,6 +292,9 @@ func testLiteralExpression(
 
 	case string:
 		return testIdentifier(t, exp, v)
+
+	case bool:
+		return testBooleanLiteral(t, exp, v)
 	}
 
 	t.Errorf("type of exp not handled. got=%T", exp)
@@ -330,9 +335,9 @@ func testInfixExpression(
 func TestParsingInfixExpressions(t *testing.T) {
 	tests := []struct {
 		input      string
-		leftValue  int64
+		leftValue  any
 		operator   string
-		rightValue int64
+		rightValue any
 	}{
 		{"6 + 5;", 6, "+", 5},
 		{"5 - 5;", 5, "-", 5},
@@ -342,6 +347,9 @@ func TestParsingInfixExpressions(t *testing.T) {
 		{"1 < 5;", 1, "<", 5},
 		{"5 == 5;", 5, "==", 5},
 		{"5 != 7;", 5, "!=", 7},
+		{"true == true;", true, "==", true},
+		{"true == false;", true, "==", false},
+		{"false == false;", false, "==", false},
 	}
 
 	for _, tt := range tests {
@@ -419,6 +427,26 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 		{
 			"3 + 4 * 5 == 3 * 1 + 4 * 5",
 			"((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
+		},
+		{
+			"true",
+			"true",
+		},
+		{
+			"false",
+			"false",
+		},
+		{
+			"3 > 5 == false",
+			"((3 > 5) == false)",
+		},
+		{
+			"3 < 5 == false",
+			"((3 < 5) == false)",
+		},
+		{
+			"3 < 5 == true",
+			"((3 < 5) == true)",
 		},
 	}
 
