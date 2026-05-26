@@ -8,7 +8,7 @@ import (
 	"monkey/internal/lexer"
 )
 
-func TestLetStatements(t *testing.T) {
+func TestParsingLetStatements(t *testing.T) {
 	input := `
 		let x = 5;
 		let y = 10;
@@ -90,7 +90,7 @@ func checkParserErrors(t *testing.T, p *Parser) {
 	t.FailNow()
 }
 
-func TestReturnStatement(t *testing.T) {
+func TestParsingReturnStatement(t *testing.T) {
 	input := `
     return 5;
 		return 10;
@@ -121,7 +121,7 @@ func TestReturnStatement(t *testing.T) {
 	}
 }
 
-func TestIdentifierExpression(t *testing.T) {
+func TestParsingIdentifierExpression(t *testing.T) {
 	input := "foobar;"
 
 	l := lexer.New(input)
@@ -152,7 +152,7 @@ func TestIdentifierExpression(t *testing.T) {
 	}
 }
 
-func TestIntegerLiteralExpression(t *testing.T) {
+func TestParsingIntegerLiteralExpression(t *testing.T) {
 	input := "5;"
 
 	l := lexer.New(input)
