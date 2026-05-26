@@ -103,6 +103,22 @@ func (il *IntegerLiteral) String() string {
 	return il.Token.Literal
 }
 
+// BooleanLiteral Node representing a boolean
+type BooleanLiteral struct {
+	Token token.Token
+	Value bool
+}
+
+func (bl *BooleanLiteral) expressionNode() {}
+
+func (bl *BooleanLiteral) TokenLiteral() string {
+	return bl.Token.Literal
+}
+
+func (bl *BooleanLiteral) String() string {
+	return bl.Token.Literal
+}
+
 type PrefixExpression struct {
 	Token    token.Token
 	Operator string
