@@ -544,3 +544,110 @@ func TestParsingBooleanLiteralExpression(t *testing.T) {
 		testBooleanLiteral(t, stmt.Expression, tc.expected)
 	}
 }
+
+func TestParsingIfExpression(t *testing.T) {
+	input := "if (x < y) { x }"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("program has not enough statements. got=%d", len(program.Statements))
+	}
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T\n", program.Statements[0])
+	}
+
+	ife, ok := stmt.Expression.(*ast.IfExpression)
+	if !ok {
+		t.Fatalf("stmt.Expression is not ast.Expression statement. got=%T\n", ife)
+	}
+
+	if !testInfixExpression(t, ife.Condition, "x", "<", "y") {
+		return
+	}
+
+	if len(ife.Then.Statements) != 1 {
+		t.Errorf("then is not 1 statement. got=%d\n", len(ife.Then.Statements))
+
+		return
+	}
+
+	then, ok := ife.Then.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("Statements[0] is not ast.ExpressionStatement. got=%T\n", ife.Then.Statements[0])
+	}
+
+	if !testIdentifier(t, then.Expression, "x") {
+		return
+	}
+
+	if ife.Else != nil {
+		t.Errorf("Else.Statements is not nil. got=%+v", ife.Else)
+	}
+}
+
+func TestParsingIfElseExpression(t *testing.T) {
+	input := "if (x < y) { x } else { y }"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("program has not enough statements. got=%d", len(program.Statements))
+	}
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T\n", program.Statements[0])
+	}
+
+	ife, ok := stmt.Expression.(*ast.IfExpression)
+	if !ok {
+		t.Fatalf("stmt.Expression is not ast.Expression statement. got=%T\n", ife)
+	}
+
+	if !testInfixExpression(t, ife.Condition, "x", "<", "y") {
+		return
+	}
+
+	if len(ife.Then.Statements) != 1 {
+		t.Errorf("then is not 1 statement. got=%d\n", len(ife.Then.Statements))
+
+		return
+	}
+
+	then, ok := ife.Then.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("Statements[0] is not ast.ExpressionStatement. got=%T\n", ife.Then.Statements[0])
+	}
+
+	if !testIdentifier(t, then.Expression, "x") {
+		return
+	}
+
+	if ife.Else == nil || len(ife.Else.Statements) == 0 {
+		t.Fatalf("Else.Statements is empty. got=%+v", ife.Else)
+	}
+
+	if len(ife.Else.Statements) != 1 {
+		t.Errorf("Else.Statements is more than 1. got=%+v", ife.Else.Statements)
+	}
+
+	elseExp, ok := ife.Else.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Errorf(
+			"Else.Statements[0] is not ast.ExpressionStatement. got=%T", ife.Else.Statements[0],
+		)
+	}
+
+	if !testIdentifier(t, elseExp.Expression, "y") {
+		return
+	}
+}

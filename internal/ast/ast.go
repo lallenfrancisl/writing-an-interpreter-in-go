@@ -109,14 +109,66 @@ type BooleanLiteral struct {
 	Value bool
 }
 
-func (bl *BooleanLiteral) expressionNode() {}
+func (ife *BooleanLiteral) expressionNode() {}
 
-func (bl *BooleanLiteral) TokenLiteral() string {
-	return bl.Token.Literal
+func (ife *BooleanLiteral) TokenLiteral() string {
+	return ife.Token.Literal
 }
 
-func (bl *BooleanLiteral) String() string {
-	return bl.Token.Literal
+func (ife *BooleanLiteral) String() string {
+	return ife.Token.Literal
+}
+
+type IfExpression struct {
+	Token     token.Token
+	Condition Expression
+	Then      *BlockStatement
+	Else      *BlockStatement
+}
+
+func (ife *IfExpression) expressionNode() {}
+
+func (ife *IfExpression) TokenLiteral() string {
+	return ife.Token.Literal
+}
+
+func (ife *IfExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("if")
+	out.WriteString(ife.Condition.String())
+	out.WriteString(" ")
+	out.WriteString(ife.Condition.String())
+	out.WriteString(" ")
+	out.WriteString(ife.Then.String())
+
+	if ife.Else != nil {
+		out.WriteString(ife.Else.String())
+		out.WriteString(ife.Then.String())
+	}
+
+	return out.String()
+}
+
+type BlockStatement struct {
+	Token      token.Token
+	Statements []Statement
+}
+
+func (bs *BlockStatement) statementNode() {}
+
+func (bs *BlockStatement) TokenLiteral() string {
+	return bs.Token.Literal
+}
+
+func (bs *BlockStatement) String() string {
+	var out bytes.Buffer
+
+	for _, s := range bs.Statements {
+		out.WriteString(s.String())
+	}
+
+	return out.String()
 }
 
 type PrefixExpression struct {
