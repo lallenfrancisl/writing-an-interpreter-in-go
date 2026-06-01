@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 
+	"monkey/internal/evaluator"
 	"monkey/internal/lexer"
 	"monkey/internal/parser"
 )
@@ -46,10 +47,17 @@ func Start(in io.Reader, out io.Writer) {
 		p := parser.New(l)
 
 		program := p.ParseProgram()
+
 		if len(p.Errors()) != 0 {
 			printParserErrors(out, p.Errors())
-		} else {
-			io.WriteString(out, program.String())
+
+			return
+		}
+
+		evaluated := evaluator.Eval(program)
+
+		if evaluated != nil {
+			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
 		}
 
