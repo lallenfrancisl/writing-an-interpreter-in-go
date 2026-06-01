@@ -180,6 +180,34 @@ func (fl *FunctionLiteral) String() string {
 	return out.String()
 }
 
+type CallExpression struct {
+	Token     token.Token
+	Function  Expression
+	Arguments []Expression
+}
+
+func (ce *CallExpression) expressionNode() {}
+
+func (ce *CallExpression) TokenLiteral() string {
+	return ce.Token.Literal
+}
+
+func (ce *CallExpression) String() string {
+	out := bytes.Buffer{}
+
+	args := []string{}
+	for _, p := range ce.Arguments {
+		args = append(args, p.String())
+	}
+
+	out.WriteString(ce.Function.TokenLiteral())
+	out.WriteString("(")
+	out.WriteString(strings.Join(args, ","))
+	out.WriteString(")")
+
+	return out.String()
+}
+
 type BlockStatement struct {
 	Token      token.Token
 	Statements []Statement
