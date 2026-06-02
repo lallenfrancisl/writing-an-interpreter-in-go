@@ -98,6 +98,15 @@ func evalInfixExpression(
 		return evalIntegerInfixExpression(left, operator, right)
 	}
 
+	if operator == "==" {
+		// INFO: We can do this since left and right are pointers
+		return nativeBoolToBooleanObject(left == right)
+	}
+
+	if operator == "!=" {
+		return nativeBoolToBooleanObject(left != right)
+	}
+
 	return NULL
 }
 
