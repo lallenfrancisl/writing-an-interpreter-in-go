@@ -1,7 +1,13 @@
 // Package object contains definitions of the repl runtime object
 package object
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+	"strings"
+
+	"monkey/internal/ast"
+)
 
 type ObjectType string
 
@@ -11,6 +17,7 @@ const (
 	NULL_OBJ         = "NULL"
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 	ERROR_OBJ        = "ERROR"
+	FUNCTION_OBJ     = "FUNCTION"
 )
 
 type Object interface {
@@ -74,4 +81,37 @@ func (e *Error) Type() ObjectType {
 
 func (e *Error) Inspect() string {
 	return "ERROR: " + e.Message
+}
+
+type Function struct {
+	Parameters []*ast.Identifier
+	Body       *ast.BlockStatement
+	Env        *Environment
+}
+
+func (f *Function) Type() ObjectType {
+	return FUNCTION_OBJ
+}
+
+func (f *Function) Inspect() string {
+	var out bytes.Buffer
+
+	params := []string{}
+	for _, param := range f.Parameters {
+		params = append(params, param.String())
+	}
+
+	out.WriteString("fn")
+	out.WriteString("(")
+
+	if len(params) > 0 {
+		out.WriteString(strings.Join(params, ","))
+	}
+
+	out.WriteString(")")
+	out.WriteString("{\n")
+	out.WriteString(f.Body.String())
+	out.WriteString("\n}")
+
+	return out.String()
 }
