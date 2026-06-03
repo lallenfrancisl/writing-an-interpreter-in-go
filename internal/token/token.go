@@ -13,10 +13,11 @@ const (
 	EOF     = "EOF"
 
 	// Identfiers and literals
-	IDENT = "IDENT"
-	INT   = "INT"
-	TRUE  = "TRUE"
-	FALSE = "FALSE"
+	IDENT  = "IDENT"
+	INT    = "INT"
+	TRUE   = "TRUE"
+	FALSE  = "FALSE"
+	STRING = "STRING"
 
 	// Operators
 	ASSIGN   = "="
