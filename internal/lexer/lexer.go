@@ -105,6 +105,9 @@ func (l *Lexer) NextToken() token.Token {
 		tok = *token.NewToken(token.STRING, 0)
 		tok.Literal = l.readString()
 
+	case ':':
+		tok = *token.NewToken(token.COLON, l.ch)
+
 	case 0:
 		tok = *token.NewToken(token.EOF, 0)
 
