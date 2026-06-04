@@ -69,6 +69,12 @@ func (l *Lexer) NextToken() token.Token {
 	case '}':
 		tok = *token.NewToken(token.RBRACE, l.ch)
 
+	case '[':
+		tok = *token.NewToken(token.LBRACKET, l.ch)
+
+	case ']':
+		tok = *token.NewToken(token.RBRACKET, l.ch)
+
 	case '!':
 		if l.peekChar() == '=' {
 			ch := l.ch
@@ -95,12 +101,12 @@ func (l *Lexer) NextToken() token.Token {
 	case '-':
 		tok = *token.NewToken(token.MINUS, l.ch)
 
-	case 0:
-		tok = *token.NewToken(token.EOF, 0)
-
 	case '"':
 		tok = *token.NewToken(token.STRING, 0)
 		tok.Literal = l.readString()
+
+	case 0:
+		tok = *token.NewToken(token.EOF, 0)
 
 	default:
 		if isLetter(l.ch) {
