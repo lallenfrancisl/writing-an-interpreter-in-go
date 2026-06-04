@@ -341,8 +341,46 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`len("")`, 0},
 		{`len("four")`, 4},
 		{`len("hello world")`, 11},
+		{"len([1, 2, 4])", 3},
 		{`len(1)`, "argument to `len` not supported, got=INTEGER"},
 		{`len("one", "two")`, "wrong number of arguments. got=2, want=1"},
+
+		{"first([1, 2, 3])", 1},
+		{`first(1)`, "argument to `first` not supported, got=INTEGER"},
+		{`first("one", "two")`, "wrong number of arguments. got=2, want=1"},
+
+		{"last([1, 2, 3])", 3},
+		{`last(1)`, "argument to `last` not supported, got=INTEGER"},
+		{
+			`last(["one", "two"], ["one", "two"])`,
+			"wrong number of arguments. got=2, want=1",
+		},
+
+		{"push([1, 2, 3], 4)", []int{1, 2, 3, 4}},
+		{"push(4)", "wrong number of arguments. got=1, want=2"},
+		{"push(4, 3)", "argument to `push` must be ARRAY, got=INTEGER"},
+
+		{"rest([1, 2, 3])", []int{2, 3}},
+		{
+			`
+				let map = fn(arr, f) { 
+					let iter = fn(arr, accumulated) { 
+						if (len(arr) == 0) { 
+							accumulated 
+						} else { 
+							iter(rest(arr), push(accumulated, f(first(arr)))); 
+						} 
+					}; 
+					
+					iter(arr, []);
+				};
+				
+				let a = [1, 2, 3, 4];
+				let double = fn(x) { x * 2 }
+				map(a, double);
+			`,
+			[]int{2, 4, 6, 8},
+		},
 	}
 
 	for _, tt := range tests {
@@ -351,6 +389,26 @@ func TestBuiltinFunctions(t *testing.T) {
 		switch expected := tt.expected.(type) {
 		case int:
 			testIntegerObject(t, evaluated, int64(expected))
+
+		case []int:
+			arrObj, ok := evaluated.(*object.Array)
+			if !ok {
+				t.Errorf("object is not Array. got=%T", arrObj)
+			}
+
+			if len(arrObj.Elements) != len(expected) {
+				t.Fatalf(
+					"array length doesn't match expected. want=%d, got=%d",
+					len(expected), len(arrObj.Elements),
+				)
+			}
+
+			for index, el := range arrObj.Elements {
+				passed := testIntegerObject(t, el, int64(expected[index]))
+				if !passed {
+					return
+				}
+			}
 
 		case string:
 			errObj, ok := evaluated.(*object.Error)
