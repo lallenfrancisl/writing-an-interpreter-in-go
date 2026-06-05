@@ -496,9 +496,6 @@ func (p *Parser) parseHashLiteral() ast.Expression {
 	return exp
 }
 
-func (p *Parser) parseHashPair(lookup map[ast.Expression]ast.Expression) {
-}
-
 func (p *Parser) curTokenIs(t token.TokenType) bool {
 	return p.curToken.Type == t
 }
