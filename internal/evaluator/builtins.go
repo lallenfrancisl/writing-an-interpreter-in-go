@@ -1,6 +1,10 @@
 package evaluator
 
-import "monkey/internal/object"
+import (
+	"fmt"
+
+	"monkey/internal/object"
+)
 
 var builtins = map[string]*object.Builtin{
 	"len": {
@@ -121,6 +125,15 @@ var builtins = map[string]*object.Builtin{
 				copy(newElements, arr.Elements[1:length])
 
 				return &object.Array{Elements: newElements}
+			}
+
+			return NULL
+		},
+	},
+	"puts": {
+		Fn: func(args ...object.Object) object.Object {
+			for _, arg := range args {
+				fmt.Println(arg.Inspect())
 			}
 
 			return NULL
