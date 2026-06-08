@@ -13,8 +13,9 @@ import (
 )
 
 const (
-	PROMPT      = ">>"
-	MONKEY_FACE = `            __,__
+	Prompt     = ">>"
+	MonkeyFace = `
+						__,__
    .--.  .-"     "-.  .--.
   / .. \/  .-. .-.  \/ .. \
  | |  '|  /   Y   \  |'  | |
@@ -33,7 +34,7 @@ func Start(in io.Reader, out io.Writer) {
 	env := object.NewEnv()
 
 	for {
-		fmt.Fprintf(out, "%s ", PROMPT)
+		fmt.Fprintf(out, "%s ", Prompt)
 
 		scanned := scanner.Scan()
 		if !scanned {
@@ -67,7 +68,7 @@ func Start(in io.Reader, out io.Writer) {
 }
 
 func printParserErrors(out io.Writer, errors []string) {
-	io.WriteString(out, MONKEY_FACE)
+	io.WriteString(out, MonkeyFace)
 	io.WriteString(out, "Woops! We ran into some monkey business here!\n")
 	io.WriteString(out, "parser errors:\n")
 
