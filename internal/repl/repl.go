@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"io"
 
-	"monkey/internal/evaluator"
+	"monkey/internal/compiler"
 	"monkey/internal/lexer"
-	"monkey/internal/object"
 	"monkey/internal/parser"
+	"monkey/internal/vm"
 )
 
 const (
@@ -31,7 +31,6 @@ const (
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
-	env := object.NewEnv()
 
 	for {
 		fmt.Fprintf(out, "%s ", Prompt)
@@ -57,13 +56,26 @@ func Start(in io.Reader, out io.Writer) {
 			return
 		}
 
-		evaluated := evaluator.Eval(program, env)
+		comp := compiler.New()
 
-		if evaluated != nil {
-			io.WriteString(out, evaluated.Inspect())
-			io.WriteString(out, "\n")
+		err := comp.Compile(program)
+		if err != nil {
+			fmt.Fprintf(out, "Woops! Compilation failed:\n %s\n", err)
+
+			continue
 		}
 
+		machine := vm.New(comp.Bytecode())
+		err = machine.Run()
+		if err != nil {
+			fmt.Fprintf(out, "Woops! Executing bytecode failed:\n %s\n", err)
+
+			continue
+		}
+
+		stackTop := machine.StackTop()
+		io.WriteString(out, stackTop.Inspect())
+		io.WriteString(out, "\n")
 	}
 }
 
