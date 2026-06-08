@@ -77,7 +77,7 @@ func (vm *VM) push(o object.Object) error {
 }
 
 func (vm *VM) pop() object.Object {
-	o := vm.constants[vm.sp-1]
+	o := vm.stack[vm.sp-1]
 	vm.sp--
 
 	return o
